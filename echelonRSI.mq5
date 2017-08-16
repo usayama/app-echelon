@@ -39,18 +39,7 @@ int OnInit() {
 
   // テクニカル指標の初期化
   hRSI = iRSI(NULL, 0, RSIPeriod, PRICE_CLOSE);
-  return(0);
-
-  // return(INIT_SUCCEEDED);
-}
-
-//+------------------------------------------------------------------+
-// 終了処理関数
-//+------------------------------------------------------------------+
-
-void OnDeinit(const int reason) {
-  // テクニカル指標の解放
-  IndicatorRelease(hRSI);
+  return(INIT_SUCCEEDED);
 }
 
 //+------------------------------------------------------------------+
@@ -82,7 +71,7 @@ int OnCalculate(
 メイン関数：通貨と時間足を監視
 ------------------------------ */
 
-int OnTick() {
+void OnTick() {
 
   /*【 バーのチェック 】*/
   static int barsOld = 0;
@@ -97,24 +86,32 @@ int OnTick() {
     for( i=0; i<ArraySize(tl); i++ ) { Echelon( "USDHKDmicro", tl[i] ); }
   }
   barsOld = barsNew;
-  return(0);
 }
 
 /* ---------------------------------------
 Echelon：取引期会を通知
 ---------------------------------------- */
 
-bool Echelon( string s, ENUM_TIMEFRAMES t ) {
+bool Echelon(string s, ENUM_TIMEFRAMES t) {
 
   // RSI判定
-  int RSI = MathRound(iRSI(s, t, 13, 0, 0));
-  string msgRSI = StringConcatenate(s, "：", t, "分のRSI：", RSI);
+  int RSI = (int)MathRound(Buf[0]);
+  string msgRSI = (string)StringConcatenate(s, "：", t, "分のRSI：", RSI);
 
   if(RSI >= 60) {
-    SendNotification( msgRSI );
+    SendNotification(msgRSI);
   } else if(RSI <= 40) {
-    SendNotification( msgRSI );
+    SendNotification(msgRSI);
   }
 
   return(0);
+}
+
+//+------------------------------------------------------------------+
+// 終了処理関数
+//+------------------------------------------------------------------+
+
+void OnDeinit(const int reason) {
+  // テクニカル指標の解放
+  IndicatorRelease(hRSI);
 }
