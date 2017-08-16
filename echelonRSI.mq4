@@ -93,12 +93,10 @@ Echelon：取引期会を通知
 bool Echelon( string s, int t ) {
 
   // RSI判定
-  int RSI = MathRound(iRSI(s, t, 13, 0, 0));
+  double RSI = NormalizeDouble(iRSI(s, t, 13, 0, 0), 1);
   string msgRSI = StringConcatenate(s, "：", t, "分のRSI：", RSI);
 
-  if(RSI >= 80) {
-    SendNotification( msgRSI );
-  } else if(RSI <= 20) {
+  if(RSI >= 75 || RSI <= 25) {
     SendNotification( msgRSI );
   }
 
