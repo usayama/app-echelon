@@ -6,26 +6,34 @@
 
 #property version   "1.00"
 
-/* -----------------------------
+/* ---------------------------------------
 グローバル変数の宣言
------------------------------- */
+---------------------------------------- */
 
-ENUM_TIMEFRAMES tl[] = { PERIOD_H1, PERIOD_H4, PERIOD_D1, PERIOD_W1 };
+ENUM_TIMEFRAMES tl[] = { PERIOD_H1, PERIOD_H2, PERIOD_H3, PERIOD_H4, PERIOD_H6, PERIOD_H8, PERIOD_H12, PERIOD_D1, PERIOD_W1 };
 
-//+------------------------------------------------------------------+
+// 前処理（変数の宣言）
+int handle = 0;
+int buffer_num = 0;
+int start_pos = 0;
+int copy_count = 1;
+
+double RSI_values[];
+double RSI = 0;
+
+/* ---------------------------------------
 // 初期化関数
-//+------------------------------------------------------------------+
+---------------------------------------- */
 
 int OnInit() {
   return(INIT_SUCCEEDED);
 }
 
-/* -----------------------------
+/* ---------------------------------------
 メイン関数：通貨と時間足を監視
------------------------------- */
+---------------------------------------- */
 
 void OnTick() {
-
   int i;
   for( i=0; i<ArraySize(tl); i++ ) { Echelon( "USDJPYmicro", tl[i] ); }
   for( i=0; i<ArraySize(tl); i++ ) { Echelon( "USDCHFmicro", tl[i] ); }
@@ -90,18 +98,60 @@ Echelon：取引期会を通知
 
 bool Echelon(string s, ENUM_TIMEFRAMES t) {
 
-  // RSI判定
-  int RSI = (int)MathRound(iRSI(s, t, 13, PRICE_CLOSE));
-  string msgRSI = (string)s + " : " + (string)t + "分のRSI : " + (string)RSI;
+  // 工程1：RSI値の取得
+  handle = iRSI(s, t, 13, PRICE_CLOSE);
+  CopyBuffer(handle, buffer_num, start_pos, copy_count, RSI_values);
+  RSI = MathRound(RSI_values[0]);
 
-  SendNotification(msgRSI);
+  string time;
+
+  switch(t) {
+    case 16385:
+      time = "1時間";
+      break;
+    case 16386:
+      time = "2時間";
+      break;
+    case 16387:
+      time = "3時間";
+      break;
+    case 16388:
+      time = "4時間";
+      break;
+    case 16390:
+      time = "6時間";
+      break;
+    case 16392:
+      time = "8時間";
+      break;
+    case 16396:
+      time = "12時間";
+      break;
+    case 16408:
+      time = "1日";
+      break;
+    case 32769:
+      time = "1週間";
+      break;
+  }
+
+  // RSI判定
+  string joinMsg = s + " : " + time + "のRSI : " + (string)RSI;
+
+  if(RSI <= 22) {
+    if(RSI > 0) {
+      SendNotification(joinMsg);
+    }
+  } else if(RSI >= 78) {
+    SendNotification(joinMsg);
+  }
 
   return(0);
 }
 
-//+------------------------------------------------------------------+
+/* ---------------------------------------
 // 終了処理関数
-//+------------------------------------------------------------------+
+---------------------------------------- */
 
 void OnDeinit(const int reason) {
 
