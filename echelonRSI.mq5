@@ -101,7 +101,7 @@ bool Echelon(string s, ENUM_TIMEFRAMES t) {
   // 工程1：RSI値の取得
   handle = iRSI(s, t, 13, PRICE_CLOSE);
   CopyBuffer(handle, buffer_num, start_pos, copy_count, RSI_values);
-  RSI = MathRound(RSI_values[0]);
+  RSI = NormalizeDouble(RSI_values[0], 1);
 
   string time;
 
@@ -136,13 +136,14 @@ bool Echelon(string s, ENUM_TIMEFRAMES t) {
   }
 
   // RSI判定
-  string joinMsg = s + " : " + time + "のRSI : " + (string)RSI;
+  string strRSI = DoubleToString(RSI, 1);
+  string joinMsg = s + " : " + time + "のRSI : " + strRSI;
 
-  if(RSI <= 22) {
+  if(RSI <= 20) {
     if(RSI > 0) {
       SendNotification(joinMsg);
     }
-  } else if(RSI >= 78) {
+  } else if(RSI >= 80) {
     SendNotification(joinMsg);
   }
 
