@@ -116,10 +116,10 @@ bool Echelon(string s, ENUM_TIMEFRAMES t) {
         time = "12H";
         break;
       case 16408:
-        time = "1H";
+        time = "1D";
         break;
       case 32769:
-        time = "1H";
+        time = "1W";
         break;
     }
 
@@ -236,4 +236,3 @@ bool Echelon(string s, ENUM_TIMEFRAMES t) {
 void OnDeinit(const int reason) {
 
 }
-
