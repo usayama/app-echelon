@@ -10,7 +10,8 @@
 グローバル変数の宣言
 ------------------------------ */
 
-ENUM_TIMEFRAMES tl[] = { PERIOD_H1, PERIOD_H4, PERIOD_D1 };
+ENUM_TIMEFRAMES tl1[] = { PERIOD_H1, PERIOD_H2, PERIOD_H3, PERIOD_H4, PERIOD_H6, PERIOD_H8, PERIOD_H12, PERIOD_D1, PERIOD_W1 };
+ENUM_TIMEFRAMES tl2[] = { PERIOD_H1, PERIOD_H2, PERIOD_H3, PERIOD_H4, PERIOD_H6, PERIOD_H8 };
 
 /* -----------------------------
 関数iCloseを使えるようにする
@@ -40,46 +41,44 @@ int OnInit() {
 void OnTick() {
 
   int i;
-  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "USDJPYmicro", tl[i] ); }
-  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "USDCHFmicro", tl[i] ); }
-  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "USDCADmicro", tl[i] ); }
-  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "USDSEKmicro", tl[i] ); }
-  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "USDNOKmicro", tl[i] ); }
-  // for( i=0; i<ArraySize(tl); i++ ) { Echelon( "USDCNHmicro", tl[i] ); }
-  // for( i=0; i<ArraySize(tl); i++ ) { Echelon( "USDMXNmicro", tl[i] ); }
-  // for( i=0; i<ArraySize(tl); i++ ) { Echelon( "USDZARmicro", tl[i] ); }
-  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "CADJPYmicro", tl[i] ); }
-  // for( i=0; i<ArraySize(tl); i++ ) { Echelon( "CADCHFmicro", tl[i] ); }
-  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "EURUSDmicro", tl[i] ); }
-  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "EURJPYmicro", tl[i] ); }
-  // for( i=0; i<ArraySize(tl); i++ ) { Echelon( "EURCADmicro", tl[i] ); }
-  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "EURGBPmicro", tl[i] ); }
-  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "EURCHFmicro", tl[i] ); }
-  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "EURAUDmicro", tl[i] ); }
-  // for( i=0; i<ArraySize(tl); i++ ) { Echelon( "EURNZDmicro", tl[i] ); }
-  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "EURNOKmicro", tl[i] ); }
-  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "EURSEKmicro", tl[i] ); }
-  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "EURZARmicro", tl[i] ); }
-  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "EURTRYmicro", tl[i] ); }
-  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "CHFJPYmicro", tl[i] ); }
-  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "GBPJPYmicro", tl[i] ); }
-  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "GBPUSDmicro", tl[i] ); }
-  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "GBPCADmicro", tl[i] ); }
-  // for( i=0; i<ArraySize(tl); i++ ) { Echelon( "GBPCHFmicro", tl[i] ); }
-  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "GBPAUDmicro", tl[i] ); }
-  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "GBPNZDmicro", tl[i] ); }
-  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "AUDJPYmicro", tl[i] ); }
-  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "AUDUSDmicro", tl[i] ); }
-  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "AUDCADmicro", tl[i] ); }
-  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "AUDCHFmicro", tl[i] ); }
-  // for( i=0; i<ArraySize(tl); i++ ) { Echelon( "AUDNZDmicro", tl[i] ); }
-  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "NZDJPYmicro", tl[i] ); }
-  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "NZDUSDmicro", tl[i] ); }
-  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "NZDCADmicro", tl[i] ); }
-  // for( i=0; i<ArraySize(tl); i++ ) { Echelon( "NZDCHFmicro", tl[i] ); }
-  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "GOLDmicro", tl[i] ); }
-  // for( i=0; i<ArraySize(tl); i++ ) { Echelon( "SILVERmicro", tl[i] ); }
-
+  for( i=0; i<ArraySize(tl1); i++ ) { Echelon( "USDJPYmicro", tl1[i] ); }
+  for( i=0; i<ArraySize(tl1); i++ ) { Echelon( "USDCHFmicro", tl1[i] ); }
+  for( i=0; i<ArraySize(tl1); i++ ) { Echelon( "USDCADmicro", tl1[i] ); }
+  for( i=0; i<ArraySize(tl1); i++ ) { Echelon( "USDSEKmicro", tl1[i] ); }
+  for( i=0; i<ArraySize(tl1); i++ ) { Echelon( "USDNOKmicro", tl1[i] ); }
+  for( i=0; i<ArraySize(tl2); i++ ) { Echelon( "USDCNHmicro", tl2[i] ); }
+  for( i=0; i<ArraySize(tl1); i++ ) { Echelon( "USDMXNmicro", tl1[i] ); }
+  for( i=0; i<ArraySize(tl1); i++ ) { Echelon( "USDZARmicro", tl1[i] ); }
+  for( i=0; i<ArraySize(tl1); i++ ) { Echelon( "CADJPYmicro", tl1[i] ); }
+  for( i=0; i<ArraySize(tl1); i++ ) { Echelon( "CADCHFmicro", tl1[i] ); }
+  for( i=0; i<ArraySize(tl1); i++ ) { Echelon( "EURUSDmicro", tl1[i] ); }
+  for( i=0; i<ArraySize(tl1); i++ ) { Echelon( "EURJPYmicro", tl1[i] ); }
+  for( i=0; i<ArraySize(tl1); i++ ) { Echelon( "EURCADmicro", tl1[i] ); }
+  for( i=0; i<ArraySize(tl1); i++ ) { Echelon( "EURGBPmicro", tl1[i] ); }
+  for( i=0; i<ArraySize(tl1); i++ ) { Echelon( "EURCHFmicro", tl1[i] ); }
+  for( i=0; i<ArraySize(tl1); i++ ) { Echelon( "EURAUDmicro", tl1[i] ); }
+  for( i=0; i<ArraySize(tl1); i++ ) { Echelon( "EURNZDmicro", tl1[i] ); }
+  for( i=0; i<ArraySize(tl1); i++ ) { Echelon( "EURNOKmicro", tl1[i] ); }
+  for( i=0; i<ArraySize(tl1); i++ ) { Echelon( "EURSEKmicro", tl1[i] ); }
+  for( i=0; i<ArraySize(tl1); i++ ) { Echelon( "EURZARmicro", tl1[i] ); }
+  for( i=0; i<ArraySize(tl1); i++ ) { Echelon( "EURTRYmicro", tl1[i] ); }
+  for( i=0; i<ArraySize(tl1); i++ ) { Echelon( "CHFJPYmicro", tl1[i] ); }
+  for( i=0; i<ArraySize(tl1); i++ ) { Echelon( "GBPJPYmicro", tl1[i] ); }
+  for( i=0; i<ArraySize(tl1); i++ ) { Echelon( "GBPUSDmicro", tl1[i] ); }
+  for( i=0; i<ArraySize(tl1); i++ ) { Echelon( "GBPCADmicro", tl1[i] ); }
+  for( i=0; i<ArraySize(tl1); i++ ) { Echelon( "GBPCHFmicro", tl1[i] ); }
+  for( i=0; i<ArraySize(tl1); i++ ) { Echelon( "GBPAUDmicro", tl1[i] ); }
+  for( i=0; i<ArraySize(tl1); i++ ) { Echelon( "GBPNZDmicro", tl1[i] ); }
+  for( i=0; i<ArraySize(tl1); i++ ) { Echelon( "AUDJPYmicro", tl1[i] ); }
+  for( i=0; i<ArraySize(tl1); i++ ) { Echelon( "AUDUSDmicro", tl1[i] ); }
+  for( i=0; i<ArraySize(tl1); i++ ) { Echelon( "AUDCADmicro", tl1[i] ); }
+  for( i=0; i<ArraySize(tl1); i++ ) { Echelon( "AUDCHFmicro", tl1[i] ); }
+  for( i=0; i<ArraySize(tl1); i++ ) { Echelon( "AUDNZDmicro", tl1[i] ); }
+  for( i=0; i<ArraySize(tl1); i++ ) { Echelon( "NZDJPYmicro", tl1[i] ); }
+  for( i=0; i<ArraySize(tl1); i++ ) { Echelon( "NZDUSDmicro", tl1[i] ); }
+  for( i=0; i<ArraySize(tl1); i++ ) { Echelon( "NZDCADmicro", tl1[i] ); }
+  for( i=0; i<ArraySize(tl2); i++ ) { Echelon( "NZDCHFmicro", tl2[i] ); }
+  for( i=0; i<ArraySize(tl1); i++ ) { Echelon( "GOLDmicro", tl1[i] ); }
   Sleep(60000);
 
 }
@@ -145,28 +144,28 @@ bool Echelon(string s, ENUM_TIMEFRAMES t) {
   // 時間足による乖離率の振り分け
   switch(t) {
     case PERIOD_H1: //60分
-      range13 = 0.15;
-      range89 = 0.45;
-      // range13 = 0.3;
-      // range89 = 0.9;
-      break;
-    case PERIOD_H4: //4時間
+      // range13 = 0.15;
+      // range89 = 0.45;
       range13 = 0.3;
       range89 = 0.9;
-      // range13 = 0.6;
-      // range89 = 1.8;
+      break;
+    case PERIOD_H4: //4時間
+      // range13 = 0.3;
+      // range89 = 0.9;
+      range13 = 0.6;
+      range89 = 1.8;
       break;
     case PERIOD_D1: //1日
-      range13 = 1.0;
-      range89 = 3.0;
-      // range13 = 2.0;
-      // range89 = 6.0;
+      // range13 = 1.0;
+      // range89 = 3.0;
+      range13 = 2.0;
+      range89 = 6.0;
       break;
     case PERIOD_W1: //1週間
-      range13 = 2.5;
-      range89 = 7.5;
-      // range13 = 5.0;
-      // range89 = 15.0;
+      // range13 = 2.5;
+      // range89 = 7.5;
+      range13 = 5.0;
+      range89 = 15.0;
       break;
   }
 
