@@ -91,54 +91,37 @@ bool Echelon(string s, ENUM_TIMEFRAMES t) {
   // 現在の値段
   double price = iClose(s, t, 0);
 
-    string time;
-
-    switch(t) {
-      case 16385:
-        time = "1H";
-        break;
-      case 16386:
-        time = "2H";
-        break;
-      case 16387:
-        time = "3H";
-        break;
-      case 16388:
-        time = "4H";
-        break;
-      case 16390:
-        time = "6H";
-        break;
-      case 16392:
-        time = "8H";
-        break;
-      case 16396:
-        time = "12H";
-        break;
-      case 16408:
-        time = "1D";
-        break;
-      case 32769:
-        time = "1W";
-        break;
-    }
-
-  // 変数定義
-  int hMA13 = 0;
-  int hMA89 = 0;
-  double bufMA13[];
-  double bufMA89[];
-  double range13, range89;
-
-  // iMAハンドルの取得とコピー
-  hMA13 = iMA(s, t, 13, 0, MODE_SMA, PRICE_CLOSE);
-  hMA89 = iMA(s, t, 89, 0, MODE_SMA, PRICE_CLOSE);
-  CopyBuffer(hMA13, 0, 0, 1, bufMA13);
-  CopyBuffer(hMA89, 0, 0, 1, bufMA89);
-
-  // 移動平均線
-  double ma13 = NormalizeDouble(bufMA13[0], 16);
-  double ma89 = NormalizeDouble(bufMA89[0], 16);
+  // 時間足を文字列に変換
+  string time;
+  switch(t) {
+    case 16385:
+      time = "1H";
+      break;
+    case 16386:
+      time = "2H";
+      break;
+    case 16387:
+      time = "3H";
+      break;
+    case 16388:
+      time = "4H";
+      break;
+    case 16390:
+      time = "6H";
+      break;
+    case 16392:
+      time = "8H";
+      break;
+    case 16396:
+      time = "12H";
+      break;
+    case 16408:
+      time = "1D";
+      break;
+    case 32769:
+      time = "1W";
+      break;
+  }
 
   // 時間足による乖離率の振り分け
   switch(t) {
@@ -198,6 +181,23 @@ bool Echelon(string s, ENUM_TIMEFRAMES t) {
       break;
   }
 
+  // 変数定義
+  int hMA13 = 0;
+  int hMA89 = 0;
+  double bufMA13[];
+  double bufMA89[];
+  double range13, range89;
+
+  // iMAハンドルの取得とコピー
+  hMA13 = iMA(s, t, 13, 0, MODE_SMA, PRICE_CLOSE);
+  hMA89 = iMA(s, t, 89, 0, MODE_SMA, PRICE_CLOSE);
+  CopyBuffer(hMA13, 0, 0, 1, bufMA13);
+  CopyBuffer(hMA89, 0, 0, 1, bufMA89);
+
+  // 移動平均線
+  double ma13 = NormalizeDouble(bufMA13[0], 16);
+  double ma89 = NormalizeDouble(bufMA89[0], 16);
+
   if(ma13 > 0) {
     if(ma89 > 0) {
       // 移動平均線乖離率
@@ -236,3 +236,4 @@ bool Echelon(string s, ENUM_TIMEFRAMES t) {
 void OnDeinit(const int reason) {
 
 }
+
