@@ -12,6 +12,29 @@
 
 ENUM_TIMEFRAMES tl[] = { PERIOD_H1, PERIOD_H2, PERIOD_H3, PERIOD_H4, PERIOD_H6, PERIOD_H8, PERIOD_H12, PERIOD_D1, PERIOD_W1 };
 
+// DFMA変数定義
+int hMA13 = 0;
+int hMA89 = 0;
+double bufMA13[];
+double bufMA89[];
+double range13, range89;
+double ma13 = 0;
+double ma89 = 0;
+double dfma13;
+double dfma89;
+string retio13;
+string retio89;
+bool overDFMA;
+bool underDFMA;
+string msgOverDFMA;
+string msgUnderDFMA;
+
+// RSI変数定義
+int hRSI = 0;
+double bufRSI[];
+double rsi = 0;
+string msgRSI;
+
 /* -----------------------------
 関数iCloseを使えるようにする
 ------------------------------ */
@@ -140,12 +163,9 @@ bool Echelon(string s, ENUM_TIMEFRAMES t) {
       break;
   }
 
-  // 変数定義
-  int hMA13 = 0;
-  int hMA89 = 0;
-  double bufMA13[];
-  double bufMA89[];
-  double range13, range89;
+  // iRSIハンドルの取得とコピー
+  hRSI= iRSI(s, t, 13, PRICE_CLOSE);
+  CopyBuffer(hRSI, 0, 0, 1, bufRSI);
 
   // iMAハンドルの取得とコピー
   hMA13 = iMA(s, t, 13, 0, MODE_SMA, PRICE_CLOSE);
@@ -154,8 +174,11 @@ bool Echelon(string s, ENUM_TIMEFRAMES t) {
   CopyBuffer(hMA89, 0, 0, 1, bufMA89);
 
   // 移動平均線
-  double ma13 = NormalizeDouble(bufMA13[0], 16);
-  double ma89 = NormalizeDouble(bufMA89[0], 16);
+  ma13 = NormalizeDouble(bufMA13[0], 16);
+  ma89 = NormalizeDouble(bufMA89[0], 16);
+
+  // RSI
+  rsi = NormalizeDouble(bufRSI[0], 1);
 
   if(ma13 > 0) {
     if(ma89 > 0) {
@@ -223,27 +246,39 @@ bool Echelon(string s, ENUM_TIMEFRAMES t) {
       }
 
       // 移動平均線乖離率
-      double dfma13 = NormalizeDouble(((price - ma13) / ma13) * 100, 16);
-      double dfma89 = NormalizeDouble(((price - ma89) / ma89) * 100, 16);
+      dfma13 = NormalizeDouble(((price - ma13) / ma13) * 100, 16);
+      dfma89 = NormalizeDouble(((price - ma89) / ma89) * 100, 16);
 
       // 乖離率の％表示
-      string retio13 = DoubleToString(MathRound((dfma13 / range13) *100), 0);
-      string retio89 = DoubleToString(MathRound((dfma89 / range89) *100), 0);
+      retio13 = DoubleToString(MathRound((dfma13 / range13) *100), 0);
+      retio89 = DoubleToString(MathRound((dfma89 / range89) *100), 0);
 
       // 移動平均線乖離判定
-      bool over  = dfma13 > range13 && dfma89 > range89;
-      bool under = dfma13 < -range13 && dfma89 < -range89;
+      overDFMA  = dfma13 > range13 && dfma89 > range89;
+      underDFMA = dfma13 < -range13 && dfma89 < -range89;
 
       // 乖離率送信
-      string msgOver  = s + ": " + time + "｜売｜" + "近: " + retio13 + "｜遠: " + retio89;
-      string msgUnder = s + ": " + time + "｜買｜" + "近: " + retio13 + "｜遠: " + retio89;
+      msgOverDFMA  = s + ": " + time + "｜売｜" + "近: " + retio13 + "｜遠: " + retio89;
+      msgUnderDFMA = s + ": " + time + "｜買｜" + "近: " + retio13 + "｜遠: " + retio89;
+
+      // RSI判定
+      msgRSI = s + " : " + time + "のRSI : " + DoubleToString(rsi, 1);
 
       // 移動平均線の乖離を通知
-      if(over) {
-        SendNotification(msgOver);
+      if(overDFMA) {
+        SendNotification(msgOverDFMA);
       }
-      else if(under) {
-        SendNotification(msgUnder);
+      else if(underDFMA) {
+        SendNotification(msgUnderDFMA);
+      }
+
+      // RSIの観測を通知
+      if(rsi <= 20) {
+        if(rsi > 0) {
+          SendNotification(msgRSI);
+        }
+      } else if(rsi >= 80) {
+        SendNotification(msgRSI);
       }
     }
   }
