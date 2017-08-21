@@ -163,9 +163,32 @@ bool Echelon(string s, ENUM_TIMEFRAMES t) {
       break;
   }
 
+  /* ---------------
+  RSI
+  --------------- */
+
   // iRSIハンドルの取得とコピー
   hRSI= iRSI(s, t, 13, PRICE_CLOSE);
   CopyBuffer(hRSI, 0, 0, 1, bufRSI);
+
+  // RSI
+  rsi = NormalizeDouble(bufRSI[0], 1);
+
+  // RSI判定
+  msgRSI = s + " : " + time + "のRSI : " + DoubleToString(rsi, 1);
+
+  // RSIの観測を通知
+  if(rsi <= 30) {
+    if(rsi > 0) {
+      SendNotification(msgRSI);
+    }
+  } else if(rsi >= 70) {
+    SendNotification(msgRSI);
+  }
+
+  /* ---------------
+  DFMA
+  --------------- */
 
   // iMAハンドルの取得とコピー
   hMA13 = iMA(s, t, 13, 0, MODE_SMA, PRICE_CLOSE);
@@ -177,67 +200,64 @@ bool Echelon(string s, ENUM_TIMEFRAMES t) {
   ma13 = NormalizeDouble(bufMA13[0], 16);
   ma89 = NormalizeDouble(bufMA89[0], 16);
 
-  // RSI
-  rsi = NormalizeDouble(bufRSI[0], 1);
-
   if(ma13 > 0) {
     if(ma89 > 0) {
 
       // 時間足による乖離率の振り分け
       switch(t) {
         case PERIOD_H1: //60分
-          // range13 = 0.15;
-          // range89 = 0.45;
-          range13 = 0.3;
-          range89 = 0.9;
+          range13 = 0.15;
+          range89 = 0.45;
+          // range13 = 0.3;
+          // range89 = 0.9;
           break;
         case PERIOD_H2: //60分
-          // range13 = 0.15;
-          // range89 = 0.45;
-          range13 = 0.4;
-          range89 = 1.2;
+          range13 = 0.15;
+          range89 = 0.45;
+          // range13 = 0.4;
+          // range89 = 1.2;
           break;
         case PERIOD_H3: //60分
-          // range13 = 0.15;
-          // range89 = 0.45;
-          range13 = 0.5;
-          range89 = 1.5;
+          range13 = 0.15;
+          range89 = 0.45;
+          // range13 = 0.5;
+          // range89 = 1.5;
           break;
         case PERIOD_H4: //4時間
-          // range13 = 0.3;
-          // range89 = 0.9;
-          range13 = 0.6;
-          range89 = 1.8;
+          range13 = 0.3;
+          range89 = 0.9;
+          // range13 = 0.6;
+          // range89 = 1.8;
           break;
         case PERIOD_H6: //4時間
-          // range13 = 0.3;
-          // range89 = 0.9;
-          range13 = 0.7;
-          range89 = 2.1;
+          range13 = 0.3;
+          range89 = 0.9;
+          // range13 = 0.7;
+          // range89 = 2.1;
           break;
         case PERIOD_H8: //4時間
-          // range13 = 0.3;
-          // range89 = 0.9;
-          range13 = 0.8;
-          range89 = 2.4;
+          range13 = 0.3;
+          range89 = 0.9;
+          // range13 = 0.8;
+          // range89 = 2.4;
           break;
         case PERIOD_H12: //4時間
-          // range13 = 0.3;
-          // range89 = 0.9;
-          range13 = 1.0;
-          range89 = 3.0;
-          break;
-        case PERIOD_D1: //1日
+          range13 = 0.3;
+          range89 = 0.9;
           // range13 = 1.0;
           // range89 = 3.0;
-          range13 = 2.0;
-          range89 = 6.0;
+          break;
+        case PERIOD_D1: //1日
+          range13 = 1.0;
+          range89 = 3.0;
+          // range13 = 2.0;
+          // range89 = 6.0;
           break;
         case PERIOD_W1: //1週間
-          // range13 = 2.5;
-          // range89 = 7.5;
-          range13 = 5.0;
-          range89 = 15.0;
+          range13 = 2.5;
+          range89 = 7.5;
+          // range13 = 5.0;
+          // range89 = 15.0;
           break;
         default:
           range13 = 999;
@@ -261,24 +281,12 @@ bool Echelon(string s, ENUM_TIMEFRAMES t) {
       msgOverDFMA  = s + ": " + time + "｜売｜" + "近: " + retio13 + "｜遠: " + retio89;
       msgUnderDFMA = s + ": " + time + "｜買｜" + "近: " + retio13 + "｜遠: " + retio89;
 
-      // RSI判定
-      msgRSI = s + " : " + time + "のRSI : " + DoubleToString(rsi, 1);
-
       // 移動平均線の乖離を通知
       if(overDFMA) {
         SendNotification(msgOverDFMA);
       }
       else if(underDFMA) {
         SendNotification(msgUnderDFMA);
-      }
-
-      // RSIの観測を通知
-      if(rsi <= 20) {
-        if(rsi > 0) {
-          SendNotification(msgRSI);
-        }
-      } else if(rsi >= 80) {
-        SendNotification(msgRSI);
       }
     }
   }
