@@ -1,59 +1,22 @@
 //+------------------------------------------------------------------+
-//|                                                         test.mq5 |
-//|                        Copyright 2017, MetaQuotes Software Corp. |
-//|                                             https://www.mql5.com |
+//|                                                      Echelon.mq4 |
+//|                                                          usayama |
+//|                                                                  |
 //+------------------------------------------------------------------+
-#property copyright "Copyright 2017, MetaQuotes Software Corp."
-#property link      "https://www.mql5.com"
-#property version   "1.00"
+
+#property copyright "usayama"
 
 /* -----------------------------
 グローバル変数の宣言
 ------------------------------ */
 
-// スコープ倍率
-double scopeGain;
-// 短期移動平均線乖離率
-double scopeGapLightPosi;
-double scopeGapLightNega;
-// 長期移動平均線乖離率
-double scopeGapHeavyPosi;
-double scopeGapHeavyNega;
+ENUM_TIMEFRAMES tl[] = { PERIOD_H1, PERIOD_H2, PERIOD_H3, PERIOD_H4, PERIOD_H6, PERIOD_H8, PERIOD_H12, PERIOD_D1, PERIOD_W1 };
 
-ENUM_TIMEFRAMES tl[] = { PERIOD_H1, PERIOD_H4, PERIOD_D1, PERIOD_W1 };
+/* -----------------------------
+関数iCloseを使えるようにする
+------------------------------ */
 
-/* ---------------------------------------
-Difine MQL4 Function
----------------------------------------- */
-
-double Low[];
-double High[];
-double Open[];
 double Close[];
-
-double iLow(string symbol,ENUM_TIMEFRAMES timeframe,int index) {
-  double low=0;
-  ArraySetAsSeries(Low,true);
-  int copied=CopyLow(symbol,timeframe,0,Bars(symbol,timeframe),Low);
-  if(copied>0 && index<copied) low=Low[index];
-  return(low);
-}
-
-double iHigh(string symbol,ENUM_TIMEFRAMES timeframe,int index) {
-  double high=0;
-  ArraySetAsSeries(High,true);
-  int copied=CopyLow(symbol,timeframe,0,Bars(symbol,timeframe),High);
-  if(copied>0 && index<copied) high=High[index];
-  return(high);
-}
-
-double iOpen(string symbol,ENUM_TIMEFRAMES timeframe,int index) {
-  double open=0;
-  ArraySetAsSeries(Open,true);
-  int copied=CopyLow(symbol,timeframe,0,Bars(symbol,timeframe),Open);
-  if(copied>0 && index<copied) open=Open[index];
-  return(open);
-}
 
 double iClose(string symbol,ENUM_TIMEFRAMES timeframe,int index) {
   double close=0;
@@ -63,135 +26,235 @@ double iClose(string symbol,ENUM_TIMEFRAMES timeframe,int index) {
   return(close);
 }
 
-//+------------------------------------------------------------------+
-//| Expert initialization function                                   |
-//+------------------------------------------------------------------+
-int OnInit()
-  {
-//---
+/* ---------------------------------------
+// 初期化関数
+---------------------------------------- */
 
-//---
-   return(INIT_SUCCEEDED);
-  }
-//+------------------------------------------------------------------+
-//| Expert deinitialization function                                 |
-//+------------------------------------------------------------------+
-void OnDeinit(const int reason)
-  {
-//---
-
-  }
+int OnInit() {
+  return(INIT_SUCCEEDED);
+}
 
 /* -----------------------------
 メイン関数：通貨と時間足を監視
 ------------------------------ */
-int OnTick() {
-
-  /*【 バーのチェック 】*/
-  static int barsOld = 0;
-  int barsNew = Bars( NULL, 5 );
-  int barsCheck = barsNew - barsOld;
+void OnTick() {
 
   int i;
-  if( barsCheck == 1 ) {
-    for( i=0; i<ArraySize(tl); i++ ) { Echelon( "USDJPYmicro", tl[i] ); }
-    for( i=0; i<ArraySize(tl); i++ ) { Echelon( "USDCADmicro", tl[i] ); }
-    for( i=0; i<ArraySize(tl); i++ ) { Echelon( "USDCHFmicro", tl[i] ); }
-    for( i=0; i<ArraySize(tl); i++ ) { Echelon( "USDHKDmicro", tl[i] ); }
-  }
-  barsOld = barsNew;
-  return(0);
-}
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "USDJPYmicro", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "USDCHFmicro", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "USDCADmicro", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "USDSEKmicro", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "USDNOKmicro", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "USDCNHmicro", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "USDMXNmicro", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "USDZARmicro", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "USDTRYmicro", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "CADJPYmicro", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "CADCHFmicro", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "EURUSDmicro", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "EURUSDmicro", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "EURJPYmicro", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "EURCADmicro", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "EURGBPmicro", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "EURCHFmicro", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "EURAUDmicro", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "EURNZDmicro", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "EURNOKmicro", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "EURSEKmicro", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "EURZARmicro", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "EURTRYmicro", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "CHFJPYmicro", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "GBPJPYmicro", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "GBPUSDmicro", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "GBPCADmicro", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "GBPCHFmicro", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "GBPAUDmicro", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "GBPNZDmicro", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "AUDJPYmicro", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "AUDUSDmicro", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "AUDCADmicro", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "AUDCHFmicro", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "AUDNZDmicro", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "NZDJPYmicro", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "NZDUSDmicro", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "NZDCADmicro", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "NZDCHFmicro", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "GOLDmicro", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "SILVERmicro", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "JP225Cash", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "US30Cash", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "US100Cash", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "US500Cash", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "EU50Cash", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "AUS200Cash", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "UK100Cash", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "GER30Cash", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "FRA40Cash", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "HK50Cash", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "SWI20Cash", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "SPAIN35Cash", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "IT40Cash", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "CHI50Cash", tl[i] ); }
+  Sleep(60000);
 
-//+------------------------------------------------------------------+
+}
 
 /* ---------------------------------------
 Echelon：取引期会を通知
 ---------------------------------------- */
 
-bool Echelon( string s, ENUM_TIMEFRAMES t ) {
+bool Echelon(string s, ENUM_TIMEFRAMES t) {
 
+  // 現在の値段
+  double price = iClose(s, t, 0);
+
+  // 時間足を文字列に変換
+  string time;
   switch(t) {
-    case PERIOD_H1: //60分
-      scopeGain = 60 * 6;
-      scopeGapLightPosi = 0.2;
-      scopeGapHeavyPosi = 1;
-      scopeGapLightNega = -0.2;
-      scopeGapHeavyNega = -1;
+    case 16385:
+      time = "1H";
       break;
-    case PERIOD_H4: //4時間
-      scopeGain = 240 * 3;
-      scopeGapLightPosi = 0.4;
-      scopeGapHeavyPosi = 1.2;
-      scopeGapLightNega = -0.4;
-      scopeGapHeavyNega = -1.2;
+    case 16386:
+      time = "2H";
       break;
-    case PERIOD_D1: //1日
-      scopeGain = 1440 * 2;
-      scopeGapLightPosi = 0.6;
-      scopeGapHeavyPosi = 1.8;
-      scopeGapLightNega = -0.6;
-      scopeGapHeavyNega = -1.8;
+    case 16387:
+      time = "3H";
       break;
-    case PERIOD_W1: //1週間
-      scopeGain = 10080 * 1;
-      scopeGapLightPosi = 3;
-      scopeGapHeavyPosi = 14;
-      scopeGapLightNega = -3;
-      scopeGapHeavyNega = -14;
+    case 16388:
+      time = "4H";
+      break;
+    case 16390:
+      time = "6H";
+      break;
+    case 16392:
+      time = "8H";
+      break;
+    case 16396:
+      time = "12H";
+      break;
+    case 16408:
+      time = "1D";
+      break;
+    case 32769:
+      time = "1W";
       break;
   }
 
-  /*【 変数の宣言 】*/
-  // 現在の値段
-  double newClose = iClose( s, t, 0 ); // 現在値
-  double newOpen = iOpen( s, t, 0 );   // 始値
-  double newHigh = iHigh( s, t, 0 );   // 高値
-  double newLow = iLow( s, t, 0 );     // 安値
+  // 変数定義
+  int hMA13 = 0;
+  int hMA89 = 0;
+  double bufMA13[];
+  double bufMA89[];
+  double range13, range89;
 
-  double oldClose = iClose( s, t, 1 ); // 一本前の終値
-  double oldOpen = iOpen( s, t, 1 );   // 一本前の始値
-  double oldHigh = iHigh( s, t, 1 );   // 一本前の高値
-  double oldLow = iLow( s, t, 1 );     // 一本前の安値
+  // iMAハンドルの取得とコピー
+  hMA13 = iMA(s, t, 13, 0, MODE_SMA, PRICE_CLOSE);
+  hMA89 = iMA(s, t, 89, 0, MODE_SMA, PRICE_CLOSE);
+  CopyBuffer(hMA13, 0, 0, 1, bufMA13);
+  CopyBuffer(hMA89, 0, 0, 1, bufMA89);
 
   // 移動平均線
-  double maNewA = iMA( s, t, 7, 0, MODE_SMA, PRICE_CLOSE );
-  double maNewB = iMA( s, t, 13, 0, MODE_SMA, PRICE_CLOSE );
-  double maNewC = iMA( s, t, 24, 0, MODE_SMA, PRICE_CLOSE );
-  double maNewD = iMA( s, t, 44, 0, MODE_SMA, PRICE_CLOSE );
-  double maNewE = iMA( s, t, 81, 0, MODE_SMA, PRICE_CLOSE );
+  double ma13 = NormalizeDouble(bufMA13[0], 16);
+  double ma89 = NormalizeDouble(bufMA89[0], 16);
 
-  // 移動平均線乖離率
-  double maGapA = ( newClose - maNewA ) / maNewA * 100;
-  double maGapE = ( newClose - maNewE ) / maNewE * 100;
+  if(ma13 > 0) {
+    if(ma89 > 0) {
 
-  // 乖離倍率
-  double kinkairiDown = MathRound( maGapA / scopeGapLightNega * 100 );
-  double enkairiDown = MathRound( maGapE / scopeGapHeavyNega * 100 );
-  double kinkairiUp = MathRound( maGapA / scopeGapLightPosi * 100 );
-  double enkairiUp = MathRound( maGapE / scopeGapHeavyPosi * 100 );
+      // 時間足による乖離率の振り分け
+      switch(t) {
+        case PERIOD_H1: //60分
+          // range13 = 0.15;
+          // range89 = 0.45;
+          range13 = 0.3;
+          range89 = 0.9;
+          break;
+        case PERIOD_H2: //60分
+          // range13 = 0.15;
+          // range89 = 0.45;
+          range13 = 0.4;
+          range89 = 1.2;
+          break;
+        case PERIOD_H3: //60分
+          // range13 = 0.15;
+          // range89 = 0.45;
+          range13 = 0.5;
+          range89 = 1.5;
+          break;
+        case PERIOD_H4: //4時間
+          // range13 = 0.3;
+          // range89 = 0.9;
+          range13 = 0.6;
+          range89 = 1.8;
+          break;
+        case PERIOD_H6: //4時間
+          // range13 = 0.3;
+          // range89 = 0.9;
+          range13 = 0.7;
+          range89 = 2.1;
+          break;
+        case PERIOD_H8: //4時間
+          // range13 = 0.3;
+          // range89 = 0.9;
+          range13 = 0.8;
+          range89 = 2.4;
+          break;
+        case PERIOD_H12: //4時間
+          // range13 = 0.3;
+          // range89 = 0.9;
+          range13 = 1.0;
+          range89 = 3.0;
+          break;
+        case PERIOD_D1: //1日
+          // range13 = 1.0;
+          // range89 = 3.0;
+          range13 = 2.0;
+          range89 = 6.0;
+          break;
+        case PERIOD_W1: //1週間
+          // range13 = 2.5;
+          // range89 = 7.5;
+          range13 = 5.0;
+          range89 = 15.0;
+          break;
+        default:
+          range13 = 999;
+          range89 = 999;
+          break;
+      }
 
-  /*【 移動平均線乖離判定 】*/
-  bool SignalGapDownA = maGapA < scopeGapLightNega && maGapE < scopeGapHeavyNega && iRSI( s, t, 14, 0 ) < 25;
-  bool SignalGapDownB = maGapA < scopeGapLightNega * 1.5 && maGapE < scopeGapHeavyNega && iRSI( s, t, 14, 0 ) < 30;
-  bool SignalGapDownC = iRSI( s, t, 14, 0 ) < 16;
-  bool SignalGapUpA = maGapA > scopeGapLightPosi && maGapE > scopeGapHeavyPosi && iRSI( s, t, 14, 0 ) > 75;
-  bool SignalGapUpB = maGapA > scopeGapLightPosi * 1.5 && maGapE > scopeGapHeavyPosi && iRSI( s, t, 14, 0 ) > 70;
-  bool SignalGapUpC = iRSI( s, t, 14, 0 ) > 84;
+      // 移動平均線乖離率
+      double dfma13 = NormalizeDouble(((price - ma13) / ma13) * 100, 16);
+      double dfma89 = NormalizeDouble(((price - ma89) / ma89) * 100, 16);
 
-  /* ------------------------------
-  乖離率判定
-  ------------------------------ */
+      // 乖離率の％表示
+      string retio13 = DoubleToString(MathRound((dfma13 / range13) *100), 0);
+      string retio89 = DoubleToString(MathRound((dfma89 / range89) *100), 0);
 
-  // 移動平均線の下方乖離を通知
-  if( SignalGapDownA || SignalGapDownB || SignalGapDownC ) {
-    string maGapStrLower = StringConcatenate( s, "：", t, "分の乖離率で買い", "｜", "RSI：", MathRound( iRSI( s, t, 13, 0 ) ), "｜", "近乖離：", kinkairiDown, "%", "｜", "遠乖離：", enkairiDown, "%" );
-    SendNotification( maGapStrLower );
+      // 移動平均線乖離判定
+      bool over  = dfma13 > range13 && dfma89 > range89;
+      bool under = dfma13 < -range13 && dfma89 < -range89;
+
+      // 乖離率送信
+      string msgOver  = s + ": " + time + "｜売｜" + "近: " + retio13 + "｜遠: " + retio89;
+      string msgUnder = s + ": " + time + "｜買｜" + "近: " + retio13 + "｜遠: " + retio89;
+
+      // 移動平均線の乖離を通知
+      if(over) {
+        SendNotification(msgOver);
+      }
+      else if(under) {
+        SendNotification(msgUnder);
+      }
+    }
   }
-  // 移動平均線の上方乖離を通知
-  else if( SignalGapUpA || SignalGapUpB || SignalGapUpC ) {
-    string maGapStrUpper = StringConcatenate( s, "：", t, "分の乖離率で売り","｜", "RSI：", MathRound( iRSI( s, t, 13, 0 ) ), "｜", "近乖離：", kinkairiUp, "%", "｜", "遠乖離：", enkairiUp, "%" );
-    SendNotification( maGapStrUpper );
-  }
+
   return(0);
+}
+
+/* ---------------------------------------
+// 終了処理関数
+---------------------------------------- */
+
+void OnDeinit(const int reason) {
+
 }
