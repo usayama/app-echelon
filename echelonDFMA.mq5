@@ -48,8 +48,10 @@ void OnTick() {
   for( i=0; i<ArraySize(tl); i++ ) { Echelon( "USDCNHmicro", tl[i] ); }
   for( i=0; i<ArraySize(tl); i++ ) { Echelon( "USDMXNmicro", tl[i] ); }
   for( i=0; i<ArraySize(tl); i++ ) { Echelon( "USDZARmicro", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "USDTRYmicro", tl[i] ); }
   for( i=0; i<ArraySize(tl); i++ ) { Echelon( "CADJPYmicro", tl[i] ); }
   for( i=0; i<ArraySize(tl); i++ ) { Echelon( "CADCHFmicro", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "EURUSDmicro", tl[i] ); }
   for( i=0; i<ArraySize(tl); i++ ) { Echelon( "EURUSDmicro", tl[i] ); }
   for( i=0; i<ArraySize(tl); i++ ) { Echelon( "EURJPYmicro", tl[i] ); }
   for( i=0; i<ArraySize(tl); i++ ) { Echelon( "EURCADmicro", tl[i] ); }
@@ -78,6 +80,21 @@ void OnTick() {
   for( i=0; i<ArraySize(tl); i++ ) { Echelon( "NZDCADmicro", tl[i] ); }
   for( i=0; i<ArraySize(tl); i++ ) { Echelon( "NZDCHFmicro", tl[i] ); }
   for( i=0; i<ArraySize(tl); i++ ) { Echelon( "GOLDmicro", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "SILVERmicro", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "JP225Cash", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "US30Cash", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "US100Cash", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "US500Cash", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "EU50Cash", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "AUS200Cash", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "UK100Cash", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "GER30Cash", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "FRA40Cash", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "HK50Cash", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "SWI20Cash", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "SPAIN35Cash", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "IT40Cash", tl[i] ); }
+  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "CHI50Cash", tl[i] ); }
   Sleep(60000);
 
 }
@@ -123,64 +140,6 @@ bool Echelon(string s, ENUM_TIMEFRAMES t) {
       break;
   }
 
-  // 時間足による乖離率の振り分け
-  switch(t) {
-    case PERIOD_H1: //60分
-      // range13 = 0.15;
-      // range89 = 0.45;
-      range13 = 0.3;
-      range89 = 0.9;
-      break;
-    case PERIOD_H2: //60分
-      // range13 = 0.15;
-      // range89 = 0.45;
-      range13 = 0.4;
-      range89 = 1.2;
-      break;
-    case PERIOD_H3: //60分
-      // range13 = 0.15;
-      // range89 = 0.45;
-      range13 = 0.5;
-      range89 = 1.5;
-      break;
-    case PERIOD_H4: //4時間
-      // range13 = 0.3;
-      // range89 = 0.9;
-      range13 = 0.6;
-      range89 = 1.8;
-      break;
-    case PERIOD_H6: //4時間
-      // range13 = 0.3;
-      // range89 = 0.9;
-      range13 = 0.7;
-      range89 = 2.1;
-      break;
-    case PERIOD_H8: //4時間
-      // range13 = 0.3;
-      // range89 = 0.9;
-      range13 = 0.8;
-      range89 = 2.4;
-      break;
-    case PERIOD_H12: //4時間
-      // range13 = 0.3;
-      // range89 = 0.9;
-      range13 = 1.0;
-      range89 = 3.0;
-      break;
-    case PERIOD_D1: //1日
-      // range13 = 1.0;
-      // range89 = 3.0;
-      range13 = 2.0;
-      range89 = 6.0;
-      break;
-    case PERIOD_W1: //1週間
-      // range13 = 2.5;
-      // range89 = 7.5;
-      range13 = 5.0;
-      range89 = 15.0;
-      break;
-  }
-
   // 変数定義
   int hMA13 = 0;
   int hMA89 = 0;
@@ -200,6 +159,69 @@ bool Echelon(string s, ENUM_TIMEFRAMES t) {
 
   if(ma13 > 0) {
     if(ma89 > 0) {
+
+      // 時間足による乖離率の振り分け
+      switch(t) {
+        case PERIOD_H1: //60分
+          // range13 = 0.15;
+          // range89 = 0.45;
+          range13 = 0.3;
+          range89 = 0.9;
+          break;
+        case PERIOD_H2: //60分
+          // range13 = 0.15;
+          // range89 = 0.45;
+          range13 = 0.4;
+          range89 = 1.2;
+          break;
+        case PERIOD_H3: //60分
+          // range13 = 0.15;
+          // range89 = 0.45;
+          range13 = 0.5;
+          range89 = 1.5;
+          break;
+        case PERIOD_H4: //4時間
+          // range13 = 0.3;
+          // range89 = 0.9;
+          range13 = 0.6;
+          range89 = 1.8;
+          break;
+        case PERIOD_H6: //4時間
+          // range13 = 0.3;
+          // range89 = 0.9;
+          range13 = 0.7;
+          range89 = 2.1;
+          break;
+        case PERIOD_H8: //4時間
+          // range13 = 0.3;
+          // range89 = 0.9;
+          range13 = 0.8;
+          range89 = 2.4;
+          break;
+        case PERIOD_H12: //4時間
+          // range13 = 0.3;
+          // range89 = 0.9;
+          range13 = 1.0;
+          range89 = 3.0;
+          break;
+        case PERIOD_D1: //1日
+          // range13 = 1.0;
+          // range89 = 3.0;
+          range13 = 2.0;
+          range89 = 6.0;
+          break;
+        case PERIOD_W1: //1週間
+          // range13 = 2.5;
+          // range89 = 7.5;
+          range13 = 5.0;
+          range89 = 15.0;
+          break;
+        default:
+          range13 = 999;
+          range89 = 999;
+          break;
+      }
+
       // 移動平均線乖離率
       double dfma13 = NormalizeDouble(((price - ma13) / ma13) * 100, 16);
       double dfma89 = NormalizeDouble(((price - ma89) / ma89) * 100, 16);
@@ -236,4 +258,3 @@ bool Echelon(string s, ENUM_TIMEFRAMES t) {
 void OnDeinit(const int reason) {
 
 }
-
