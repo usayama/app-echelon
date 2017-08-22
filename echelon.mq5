@@ -115,7 +115,6 @@ void OnTick() {
   for( i=0; i<ArraySize(tl); i++ ) { Echelon( "FRA40Cash", tl[i] ); }
   for( i=0; i<ArraySize(tl); i++ ) { Echelon( "HK50Cash", tl[i] ); }
   for( i=0; i<ArraySize(tl); i++ ) { Echelon( "SWI20Cash", tl[i] ); }
-  for( i=0; i<ArraySize(tl); i++ ) { Echelon( "SPAIN35Cash", tl[i] ); }
   for( i=0; i<ArraySize(tl); i++ ) { Echelon( "IT40Cash", tl[i] ); }
   for( i=0; i<ArraySize(tl); i++ ) { Echelon( "CHI50Cash", tl[i] ); }
   Sleep(60000);
@@ -175,14 +174,14 @@ bool Echelon(string s, ENUM_TIMEFRAMES t) {
   rsi = NormalizeDouble(bufRSI[0], 1);
 
   // RSI判定
-  msgRSI = s + " : " + time + "のRSI : " + DoubleToString(rsi, 1);
+  msgRSI = s + ": " + time + "｜RSI : " + DoubleToString(rsi, 1);
 
   // RSIの観測を通知
-  if(rsi <= 30) {
+  if(rsi <= 25) {
     if(rsi > 0) {
       SendNotification(msgRSI);
     }
-  } else if(rsi >= 70) {
+  } else if(rsi >= 75) {
     SendNotification(msgRSI);
   }
 
@@ -205,59 +204,59 @@ bool Echelon(string s, ENUM_TIMEFRAMES t) {
 
       // 時間足による乖離率の振り分け
       switch(t) {
-        case PERIOD_H1: //60分
-          range13 = 0.15;
-          range89 = 0.45;
+        case PERIOD_H1:
+          // range13 = 0.15;
+          // range89 = 0.45;
+          range13 = 0.3;
+          range89 = 1.2;
+          break;
+        case PERIOD_H2:
+          // range13 = 0.15;
+          // range89 = 0.45;
+          range13 = 0.35;
+          range89 = 1.4;
+          break;
+        case PERIOD_H3:
+          // range13 = 0.15;
+          // range89 = 0.45;
+          range13 = 0.4;
+          range89 = 1.6;
+          break;
+        case PERIOD_H4:
           // range13 = 0.3;
           // range89 = 0.9;
+          range13 = 0.5;
+          range89 = 2.0;
           break;
-        case PERIOD_H2: //60分
-          range13 = 0.15;
-          range89 = 0.45;
-          // range13 = 0.4;
-          // range89 = 1.2;
+        case PERIOD_H6:
+          // range13 = 0.3;
+          // range89 = 0.9;
+          range13 = 0.6;
+          range89 = 2.4;
           break;
-        case PERIOD_H3: //60分
-          range13 = 0.15;
-          range89 = 0.45;
-          // range13 = 0.5;
-          // range89 = 1.5;
+        case PERIOD_H8:
+          // range13 = 0.3;
+          // range89 = 0.9;
+          range13 = 0.7;
+          range89 = 2.8;
           break;
-        case PERIOD_H4: //4時間
-          range13 = 0.3;
-          range89 = 0.9;
-          // range13 = 0.6;
-          // range89 = 1.8;
+        case PERIOD_H12:
+          // range13 = 0.3;
+          // range89 = 0.9;
+          range13 = 0.8;
+          range89 = 3.2;
           break;
-        case PERIOD_H6: //4時間
-          range13 = 0.3;
-          range89 = 0.9;
-          // range13 = 0.7;
-          // range89 = 2.1;
-          break;
-        case PERIOD_H8: //4時間
-          range13 = 0.3;
-          range89 = 0.9;
-          // range13 = 0.8;
-          // range89 = 2.4;
-          break;
-        case PERIOD_H12: //4時間
-          range13 = 0.3;
-          range89 = 0.9;
+        case PERIOD_D1:
           // range13 = 1.0;
           // range89 = 3.0;
+          range13 = 1.25;
+          range89 = 5.0;
           break;
-        case PERIOD_D1: //1日
-          range13 = 1.0;
-          range89 = 3.0;
-          // range13 = 2.0;
-          // range89 = 6.0;
-          break;
-        case PERIOD_W1: //1週間
+        case PERIOD_W1:
+          // range13 = 2.5;
+          // range89 = 7.5;
           range13 = 2.5;
-          range89 = 7.5;
-          // range13 = 5.0;
-          // range89 = 15.0;
+          range89 = 10;
           break;
         default:
           range13 = 999;
