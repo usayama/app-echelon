@@ -13,15 +13,20 @@
 ENUM_TIMEFRAMES tl[] = { PERIOD_H1, PERIOD_H2, PERIOD_H3, PERIOD_H4, PERIOD_H6, PERIOD_H8, PERIOD_H12, PERIOD_D1, PERIOD_W1 };
 
 // DFMA変数定義
+int hMA08 = 0;
 int hMA13 = 0;
 int hMA89 = 0;
+double bufMA08[];
 double bufMA13[];
 double bufMA89[];
-double range13, range89;
+double range08, range13, range89;
+double ma08 = 0;
 double ma13 = 0;
 double ma89 = 0;
+double dfma08;
 double dfma13;
 double dfma89;
+string retio08;
 string retio13;
 string retio89;
 bool overDFMA;
@@ -204,107 +209,110 @@ bool Echelon(string s, ENUM_TIMEFRAMES t) {
   --------------- */
 
   // iMAハンドルの取得
+  hMA08 = iMA(name, time, 08, 0, MODE_SMA, PRICE_CLOSE);
   hMA13 = iMA(name, time, 13, 0, MODE_SMA, PRICE_CLOSE);
   hMA89 = iMA(name, time, 89, 0, MODE_SMA, PRICE_CLOSE);
 
   // ハンドル取得にエラーがでなかったとき
   if(hMA13 != -1) {
     if(hMA89 != -1) {
+      if(hMA08 != -1) {
 
-      // ハンドルをコピー
-      CopyBuffer(hMA13, 0, 0, 1, bufMA13);
-      CopyBuffer(hMA89, 0, 0, 1, bufMA89);
+        // ハンドルをコピー
+        CopyBuffer(hMA08, 0, 0, 1, bufMA13);
+        CopyBuffer(hMA13, 0, 0, 1, bufMA13);
+        CopyBuffer(hMA89, 0, 0, 1, bufMA89);
 
-      // 移動平均線
-      ma13 = NormalizeDouble(bufMA13[0], 4);
-      ma89 = NormalizeDouble(bufMA89[0], 4);
+        // 移動平均線
+        ma08 = NormalizeDouble(bufMA13[0], 4);
+        ma13 = NormalizeDouble(bufMA13[0], 4);
+        ma89 = NormalizeDouble(bufMA89[0], 4);
 
-      // 時間足による乖離率の振り分け
-      switch(time) {
-        case PERIOD_H1:
-          // range13 = 0.15;
-          // range89 = 0.45;
-          range13 = 0.3;
-          range89 = 1.2;
-          break;
-        case PERIOD_H2:
-          // range13 = 0.15;
-          // range89 = 0.45;
-          range13 = 0.35;
-          range89 = 1.4;
-          break;
-        case PERIOD_H3:
-          // range13 = 0.15;
-          // range89 = 0.45;
-          range13 = 0.4;
-          range89 = 1.6;
-          break;
-        case PERIOD_H4:
-          // range13 = 0.3;
-          // range89 = 0.9;
-          range13 = 0.5;
-          range89 = 2.0;
-          break;
-        case PERIOD_H6:
-          // range13 = 0.3;
-          // range89 = 0.9;
-          range13 = 0.6;
-          range89 = 2.4;
-          break;
-        case PERIOD_H8:
-          // range13 = 0.3;
-          // range89 = 0.9;
-          range13 = 0.7;
-          range89 = 2.8;
-          break;
-        case PERIOD_H12:
-          // range13 = 0.3;
-          // range89 = 0.9;
-          range13 = 0.8;
-          range89 = 3.2;
-          break;
-        case PERIOD_D1:
-          // range13 = 1.0;
-          // range89 = 3.0;
-          range13 = 1.25;
-          range89 = 5.0;
-          break;
-        case PERIOD_W1:
-          // range13 = 2.5;
-          // range89 = 7.5;
-          range13 = 2.5;
-          range89 = 10;
-          break;
-        default:
-          range13 = 999;
-          range89 = 999;
-          break;
-      }
-
-      // 移動平均線乖離率
-      dfma13 = NormalizeDouble(((price - ma13) / ma13) * 100, 2);
-      dfma89 = NormalizeDouble(((price - ma89) / ma89) * 100, 2);
-
-      // 乖離率の％表示
-      retio13 = DoubleToString(MathRound((dfma13 / range13) *100), 0);
-      retio89 = DoubleToString(MathRound((dfma89 / range89) *100), 0);
-
-      // 乖離率送信
-      msgOverDFMA  = sbl + ": " + period + "｜S｜近: " + retio13 + "｜遠: " + retio89 + "｜R: " + strRSI;
-      msgUnderDFMA = sbl + ": " + period + "｜L｜近: " + retio13 + "｜遠: " + retio89 + "｜R: " + strRSI;
-
-      // 移動平均線の乖離を通知
-      if(dfma13 > range13) {
-        if(dfma89 > range89) {
-          SendNotification(msgOverDFMA);
+        // 時間足による乖離率の振り分け
+        switch(time) {
+          case PERIOD_H1:
+            range08 = 0.15;
+            range13 = 0.24;
+            range89 = 1.2;
+            break;
+          case PERIOD_H2:
+            range08 = 0.175;
+            range13 = 0.28;
+            range89 = 1.4;
+            break;
+          case PERIOD_H3:
+            range08 = 0.2;
+            range13 = 0.32;
+            range89 = 1.6;
+            break;
+          case PERIOD_H4:
+            range08 = 0.25;
+            range13 = 0.4;
+            range89 = 2.0;
+            break;
+          case PERIOD_H6:
+            range08 = 0.3;
+            range13 = 0.48;
+            range89 = 2.4;
+            break;
+          case PERIOD_H8:
+            range08 = 0.35;
+            range13 = 0.56;
+            range89 = 2.8;
+            break;
+          case PERIOD_H12:
+            range08 = 0.4;
+            range13 = 0.64;
+            range89 = 3.2;
+            break;
+          case PERIOD_D1:
+            range08 = 0.625;
+            range13 = 1.0;
+            range89 = 5.0;
+            break;
+          case PERIOD_W1:
+            range08 = 1.25;
+            range13 = 2.0;
+            range89 = 10;
+            break;
+          default:
+            range08 = 999;
+            range13 = 999;
+            range89 = 999;
+            break;
         }
-      }
-      else if(dfma13 < -range13) {
-        if(dfma89 < -range89) {
-          SendNotification(msgUnderDFMA);
-        }
-      }
 
+        // 移動平均線乖離率
+        dfma08 = NormalizeDouble(((price - ma08) / ma08) * 100, 2);
+        dfma13 = NormalizeDouble(((price - ma13) / ma13) * 100, 2);
+        dfma89 = NormalizeDouble(((price - ma89) / ma89) * 100, 2);
+
+        // 乖離率の％表示
+        retio08 = DoubleToString(MathRound((dfma08 / range08) *100), 0);
+        retio13 = DoubleToString(MathRound((dfma13 / range13) *100), 0);
+        retio89 = DoubleToString(MathRound((dfma89 / range89) *100), 0);
+
+        // 乖離率送信
+        msgOverDFMA  = sbl + ": " + period + "｜近: " + retio08 + "｜遠: " + retio89 + "｜R: " + strRSI;
+        msgUnderDFMA = sbl + ": " + period + "｜近: " + retio08 + "｜遠: " + retio89 + "｜R: " + strRSI;
+
+        // 移動平均線の乖離を通知
+        if(dfma08 > range08) {
+          if(dfma13 > range13) {
+            if(dfma89 > range89) {
+              SendNotification(msgOverDFMA);
+            }
+          }
+        }
+        if(dfma08 < -range08) {
+          if(dfma13 < -range13) {
+            if(dfma89 < -range89) {
+              SendNotification(msgUnderDFMA);
+            }
+          }
+        }
+
+      }
     }
   }
 
