@@ -33,7 +33,15 @@ string msgUnderDFMA;
 int hRSI = 0;
 double bufRSI[];
 double rsi = 0;
+string strRSI;
 string msgRSI;
+
+// 共通変数定義
+string name;
+ENUM_TIMEFRAMES time;
+string period;
+string sbl;
+int i=0;
 
 /* -----------------------------
 関数iCloseを使えるようにする
@@ -49,6 +57,8 @@ double iClose(string symbol,ENUM_TIMEFRAMES timeframe,int index) {
   return(close);
 }
 
+double price;
+
 /* ---------------------------------------
 // 初期化関数
 ---------------------------------------- */
@@ -61,8 +71,6 @@ int OnInit() {
 メイン関数：通貨と時間足を監視
 ------------------------------ */
 void OnTick() {
-
-  int i;
   for( i=0; i<ArraySize(tl); i++ ) { Echelon( "USDJPYmicro", tl[i] ); }
   for( i=0; i<ArraySize(tl); i++ ) { Echelon( "USDCHFmicro", tl[i] ); }
   for( i=0; i<ArraySize(tl); i++ ) { Echelon( "USDCADmicro", tl[i] ); }
@@ -118,7 +126,6 @@ void OnTick() {
   for( i=0; i<ArraySize(tl); i++ ) { Echelon( "IT40Cash", tl[i] ); }
   for( i=0; i<ArraySize(tl); i++ ) { Echelon( "CHI50Cash", tl[i] ); }
   Sleep(60000);
-
 }
 
 /* ---------------------------------------
@@ -127,38 +134,45 @@ Echelon：取引期会を通知
 
 bool Echelon(string s, ENUM_TIMEFRAMES t) {
 
+  name = s;
+  time = t;
+  sbl = name;
+
+  // microを削除
+  StringReplace(sbl, "micro", "");
+  StringReplace(sbl, "Cash", "");
+
   // 現在の値段
-  double price = iClose(s, t, 0);
+  price = iClose(name, time, 0);
 
   // 時間足を文字列に変換
-  string time;
-  switch(t) {
+  switch(time) {
     case 16385:
-      time = "1H";
+      period = "1H";
       break;
     case 16386:
-      time = "2H";
+      period = "2H";
       break;
     case 16387:
-      time = "3H";
+      period = "3H";
       break;
     case 16388:
-      time = "4H";
+      period = "4H";
       break;
     case 16390:
-      time = "6H";
+      period = "6H";
       break;
     case 16392:
-      time = "8H";
+      period = "8H";
       break;
     case 16396:
-      time = "12H";
+      period = "12H";
       break;
     case 16408:
-      time = "1D";
+      period = "1D";
       break;
     case 32769:
-      time = "1W";
+      period = "1W";
       break;
   }
 
@@ -166,44 +180,47 @@ bool Echelon(string s, ENUM_TIMEFRAMES t) {
   RSI
   --------------- */
 
-  // iRSIハンドルの取得とコピー
-  hRSI= iRSI(s, t, 13, PRICE_CLOSE);
-  CopyBuffer(hRSI, 0, 0, 1, bufRSI);
-
-  // RSI
-  rsi = NormalizeDouble(bufRSI[0], 1);
-
-  // RSI判定
-  msgRSI = s + ": " + time + "｜RSI : " + DoubleToString(rsi, 1);
-
-  // RSIの観測を通知
-  if(rsi <= 25) {
-    if(rsi > 0) {
+  // iRSIハンドルの取得
+  hRSI = iRSI(name, time, 13, PRICE_CLOSE);
+  if(hRSI != -1) {
+    // ハンドルをコピー
+    CopyBuffer(hRSI, 0, 0, 1, bufRSI);
+    // RSI
+    rsi = NormalizeDouble(bufRSI[0], 1);
+    // RSIを文字列化
+    strRSI = DoubleToString(rsi, 1);
+    // RSIメッセージ
+    msgRSI = sbl + ": " + period + "｜RSI : " + strRSI;
+    // RSI判定
+    if(rsi <= 20) {
+      SendNotification(msgRSI);
+    } else if(rsi >= 80) {
       SendNotification(msgRSI);
     }
-  } else if(rsi >= 75) {
-    SendNotification(msgRSI);
   }
 
   /* ---------------
   DFMA
   --------------- */
 
-  // iMAハンドルの取得とコピー
-  hMA13 = iMA(s, t, 13, 0, MODE_SMA, PRICE_CLOSE);
-  hMA89 = iMA(s, t, 89, 0, MODE_SMA, PRICE_CLOSE);
-  CopyBuffer(hMA13, 0, 0, 1, bufMA13);
-  CopyBuffer(hMA89, 0, 0, 1, bufMA89);
+  // iMAハンドルの取得
+  hMA13 = iMA(name, time, 13, 0, MODE_SMA, PRICE_CLOSE);
+  hMA89 = iMA(name, time, 89, 0, MODE_SMA, PRICE_CLOSE);
 
-  // 移動平均線
-  ma13 = NormalizeDouble(bufMA13[0], 16);
-  ma89 = NormalizeDouble(bufMA89[0], 16);
+  // ハンドル取得にエラーがでなかったとき
+  if(hMA13 != -1) {
+    if(hMA89 != -1) {
 
-  if(ma13 > 0) {
-    if(ma89 > 0) {
+      // ハンドルをコピー
+      CopyBuffer(hMA13, 0, 0, 1, bufMA13);
+      CopyBuffer(hMA89, 0, 0, 1, bufMA89);
+
+      // 移動平均線
+      ma13 = NormalizeDouble(bufMA13[0], 4);
+      ma89 = NormalizeDouble(bufMA89[0], 4);
 
       // 時間足による乖離率の振り分け
-      switch(t) {
+      switch(time) {
         case PERIOD_H1:
           // range13 = 0.15;
           // range89 = 0.45;
@@ -265,28 +282,29 @@ bool Echelon(string s, ENUM_TIMEFRAMES t) {
       }
 
       // 移動平均線乖離率
-      dfma13 = NormalizeDouble(((price - ma13) / ma13) * 100, 16);
-      dfma89 = NormalizeDouble(((price - ma89) / ma89) * 100, 16);
+      dfma13 = NormalizeDouble(((price - ma13) / ma13) * 100, 2);
+      dfma89 = NormalizeDouble(((price - ma89) / ma89) * 100, 2);
 
       // 乖離率の％表示
       retio13 = DoubleToString(MathRound((dfma13 / range13) *100), 0);
       retio89 = DoubleToString(MathRound((dfma89 / range89) *100), 0);
 
-      // 移動平均線乖離判定
-      overDFMA  = dfma13 > range13 && dfma89 > range89;
-      underDFMA = dfma13 < -range13 && dfma89 < -range89;
-
       // 乖離率送信
-      msgOverDFMA  = s + ": " + time + "｜売｜" + "近: " + retio13 + "｜遠: " + retio89;
-      msgUnderDFMA = s + ": " + time + "｜買｜" + "近: " + retio13 + "｜遠: " + retio89;
+      msgOverDFMA  = sbl + ": " + period + "｜S｜近: " + retio13 + "｜遠: " + retio89 + "｜R: " + strRSI;
+      msgUnderDFMA = sbl + ": " + period + "｜L｜近: " + retio13 + "｜遠: " + retio89 + "｜R: " + strRSI;
 
       // 移動平均線の乖離を通知
-      if(overDFMA) {
-        SendNotification(msgOverDFMA);
+      if(dfma13 > range13) {
+        if(dfma89 > range89) {
+          SendNotification(msgOverDFMA);
+        }
       }
-      else if(underDFMA) {
-        SendNotification(msgUnderDFMA);
+      else if(dfma13 < -range13) {
+        if(dfma89 < -range89) {
+          SendNotification(msgUnderDFMA);
+        }
       }
+
     }
   }
 
