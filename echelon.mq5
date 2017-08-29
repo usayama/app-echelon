@@ -231,48 +231,48 @@ bool Echelon(string s, ENUM_TIMEFRAMES t) {
         // 時間足による乖離率の振り分け
         switch(time) {
           case PERIOD_H1:
-            range08 = 0.15;
-            range13 = 0.24;
+            range08 = 0.2;
+            range13 = 0.3;
             range89 = 1.2;
             break;
           case PERIOD_H2:
-            range08 = 0.175;
-            range13 = 0.28;
+            range08 = 0.23;
+            range13 = 0.35;
             range89 = 1.4;
             break;
           case PERIOD_H3:
-            range08 = 0.2;
-            range13 = 0.32;
+            range08 = 0.27;
+            range13 = 0.4;
             range89 = 1.6;
             break;
           case PERIOD_H4:
-            range08 = 0.25;
-            range13 = 0.4;
+            range08 = 0.33;
+            range13 = 0.5;
             range89 = 2.0;
             break;
           case PERIOD_H6:
-            range08 = 0.3;
-            range13 = 0.48;
+            range08 = 0.4;
+            range13 = 0.6;
             range89 = 2.4;
             break;
           case PERIOD_H8:
-            range08 = 0.35;
-            range13 = 0.56;
+            range08 = 0.47;
+            range13 = 0.7;
             range89 = 2.8;
             break;
           case PERIOD_H12:
-            range08 = 0.4;
-            range13 = 0.64;
+            range08 = 0.53;
+            range13 = 0.8;
             range89 = 3.2;
             break;
           case PERIOD_D1:
-            range08 = 0.625;
-            range13 = 1.0;
+            range08 = 0.83;
+            range13 = 1.25;
             range89 = 5.0;
             break;
           case PERIOD_W1:
-            range08 = 1.25;
-            range13 = 2.0;
+            range08 = 1.7;
+            range13 = 2.5;
             range89 = 10;
             break;
           default:
