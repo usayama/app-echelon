@@ -293,21 +293,25 @@ bool Echelon(string s, ENUM_TIMEFRAMES t) {
         retio89 = DoubleToString(MathRound((dfma89 / range89) *100), 0);
 
         // 乖離率送信
-        msgOverDFMA  = sbl + ": " + period + "｜近: " + retio08 + "｜遠: " + retio89 + "｜R: " + strRSI;
-        msgUnderDFMA = sbl + ": " + period + "｜近: " + retio08 + "｜遠: " + retio89 + "｜R: " + strRSI;
+        msgOverDFMA  = sbl + ": " + period + "｜近: " + retio13 + "｜遠: " + retio89 + "｜R: " + strRSI;
+        msgUnderDFMA = sbl + ": " + period + "｜近: " + retio13 + "｜遠: " + retio89 + "｜R: " + strRSI;
 
         // 移動平均線の乖離を通知
         if(dfma08 > range08) {
           if(dfma13 > range13) {
             if(dfma89 > range89) {
-              SendNotification(msgOverDFMA);
+              if(rsi >= 70) {
+                SendNotification(msgOverDFMA);
+              }
             }
           }
         }
         if(dfma08 < -range08) {
           if(dfma13 < -range13) {
             if(dfma89 < -range89) {
-              SendNotification(msgUnderDFMA);
+              if(rsi <= 30) {
+                SendNotification(msgUnderDFMA);
+              }
             }
           }
         }
